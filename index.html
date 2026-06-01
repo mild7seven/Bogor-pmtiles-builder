@@ -14,7 +14,12 @@
 </head>
 <body>
     <div id="ui-container">
-        <input id="q" type="text" placeholder="Cari lokasi...">
+        
+        <div class="search-wrapper">
+            <input id="q" type="text" placeholder="Cari lokasi wisata..." autocomplete="off">
+            <div id="autocomplete-list" class="autocomplete-items"></div>
+        </div>
+        
         <button id="loc">Mulai GPS</button>
         <button id="btn-export">Ekspor GPX</button>
     </div>
