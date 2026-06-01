@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OpenMap Bogor Navigator</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/app.css">
+    
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/pmtiles@2.11.0/dist/index.js"></script>
+</head>
+<body>
+    <div id="ui-container" style="position: absolute; z-index: 10; top: 10px; left: 10px; display: flex; gap: 5px;">
+        <input id="q" type="text" placeholder="Cari lokasi..." style="padding: 8px;">
+        <button id="loc" style="padding: 8px;">Mulai GPS</button>
+        <button id="btn-export" style="padding: 8px;">Ekspor GPX</button>
+    </div>
+    
+    <div id="map" style="width: 100vw; height: 100vh;"></div>
+    
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

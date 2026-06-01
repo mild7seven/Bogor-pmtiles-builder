@@ -1,0 +1,24 @@
+{
+  "name": "OpenMap Bogor Navigator",
+  "short_name": "OMB Nav",
+  "description": "Aplikasi navigasi offline murni untuk kota Bogor dengan PMTiles dan A* Routing.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f4f0",
+  "theme_color": "#007cbf",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
