@@ -1,0 +1,33 @@
+name: Build PMTiles
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Download Planetiler
+        run: |
+          wget https://github.com/onthegomap/planetiler/releases/latest/download/planetiler.jar
+
+      - name: Build PMTiles
+        run: |
+          java -Xmx6g -jar planetiler.jar \
+            --osm-path=planet_106.777_-6.604_ffcb9a8a.osm.pbf \
+            --output=bogor.pmtiles
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bogor-pmtiles
+          path: bogor.pmtiles
