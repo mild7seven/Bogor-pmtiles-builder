@@ -1,14 +1,14 @@
-/* Reset dasar dan pengaturan font */
+/* Reset Dasar & Pencegah Scroll Tidak Sengaja di HP */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f8f4f0; /* Sesuai dengan background_color di manifest */
-    overflow: hidden; /* Mencegah scroll tidak sengaja saat menggeser peta di HP */
+    background-color: #f8f4f0;
+    overflow: hidden; 
 }
 
-/* Kontainer Peta */
+/* Peta Mengisi Seluruh Layar */
 #map {
     height: 100vh;
     width: 100vw;
@@ -18,62 +18,102 @@ html, body {
     z-index: 1;
 }
 
-/* Container UI melayang di atas peta */
+/* Kontainer UI Melayang (Floating UI) */
 #ui-container {
     position: absolute;
     z-index: 10;
     top: 15px;
     left: 15px;
-    right: 15px; /* Memberi margin di kanan untuk layar kecil */
+    right: 15px;
     display: flex;
-    flex-wrap: wrap; /* Mengizinkan elemen turun ke baris baru jika layar terlalu sempit */
+    flex-wrap: wrap; /* Tombol otomatis turun baris jika layar HP terlalu kecil */
     gap: 10px;
-    pointer-events: none; /* Membiarkan klik yang meleset tembus ke peta di bawahnya */
+    pointer-events: none; /* Sentuhan di area kosong akan menembus ke peta */
 }
 
-/* Properti umum untuk elemen interaktif di dalam container UI */
-#ui-container > * {
-    pointer-events: auto; /* Mengaktifkan kembali interaksi klik/sentuh */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    border: none;
-    outline: none;
-    font-size: 15px;
-    transition: all 0.2s ease;
+/* Mengaktifkan kembali klik khusus untuk tombol dan kotak pencarian */
+#ui-container > *, .search-wrapper > * {
+    pointer-events: auto; 
 }
 
-/* Kotak Pencarian (Search Bar) */
+/* --- TATA LETAK PENCARIAN & AUTOCOMPLETE --- */
+.search-wrapper {
+    position: relative;
+    flex: 1 1 200px; /* Kotak pencarian otomatis memanjang */
+    display: flex;
+    flex-direction: column;
+}
+
 #q {
-    flex: 1 1 200px; /* Fleksibel memanjang untuk mengisi ruang kosong */
+    width: 100%;
     padding: 12px 16px;
-    background-color: white;
-    color: #333;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    transition: box-shadow 0.2s;
 }
 
 #q:focus {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Tombol-tombol umum */
+.autocomplete-items {
+    position: absolute;
+    top: 100%; /* Terpasang tepat di bawah input */
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background-color: white;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 2px;
+}
+
+.autocomplete-items div {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+}
+
+.autocomplete-items div:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-items div:hover {
+    background-color: #f1f1f1;
+}
+
+/* --- TATA LETAK TOMBOL --- */
 button {
     padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
     background-color: white;
     color: #444;
     font-weight: bold;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    -webkit-tap-highlight-color: transparent; /* Menghilangkan highlight biru bawaan browser mobile */
+    -webkit-tap-highlight-color: transparent; /* Hilangkan efek biru bawaan Chrome Android */
+    transition: background-color 0.2s, transform 0.1s;
 }
 
-/* Efek saat tombol ditekan */
 button:active {
     background-color: #e0e0e0;
-    transform: scale(0.97);
+    transform: scale(0.97); /* Animasi tombol tertekan */
 }
 
-/* Tombol Ekspor GPX dengan warna aksen */
+/* Tombol Ekspor dibuat lebih menonjol */
 #btn-export {
     background-color: #007cbf;
     color: white;
@@ -83,12 +123,9 @@ button:active {
     background-color: #005f92;
 }
 
-/* Penyesuaian posisi kontrol navigasi/zoom bawaan MapLibre */
-/* Agar tidak bertumpukan dengan UI kustom kita di bagian atas */
-.maplibregl-ctrl-top-right {
-    top: 70px !important;
-}
-
+/* --- PENYESUAIAN MAPLIBRE --- */
+/* Menggeser kontrol zoom peta bawaan agar tidak tertutup tombol kita */
+.maplibregl-ctrl-top-right,
 .maplibregl-ctrl-top-left {
     top: 70px !important;
 }
