@@ -1,4 +1,5 @@
-const CACHE_NAME = 'omb-cache-v2';
+// GANTI KE v3 AGAR BROWSER MEMUAT ULANG SCRIPT JS YANG BARU KITA PERBAIKI
+const CACHE_NAME = 'omb-cache-v3'; 
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -16,7 +17,6 @@ const ASSETS_TO_CACHE = [
     './data/graph.json'
 ];
 
-// Instalasi dan Cache Aset
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -25,7 +25,6 @@ self.addEventListener('install', event => {
     );
 });
 
-// Hapus Cache Lama
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys => Promise.all(
@@ -35,20 +34,20 @@ self.addEventListener('activate', event => {
     self.clients.claim();
 });
 
-// Intersepsi Fetch
 self.addEventListener('fetch', event => {
-    // BYPASS: Jangan intercept Range Requests, biarkan browser menanganinya
-    // Ini sangat krusial agar file .pmtiles bisa dibaca sebagian-sebagian.
     if (event.request.headers.has('range')) {
-        return;
+        return; // Biarkan PMTiles menangani potongannya sendiri
     }
     
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
-            return cachedResponse || fetch(event.request);
-        }).catch(() => {
-            // Fallback error handling (misalnya jika jaringan mati total)
-            console.error("Gagal memuat:", event.request.url);
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+            // Tambahkan return fetch agar file yang terlewat tetap diunduh dari jaringan
+            return fetch(event.request).catch(error => {
+                console.error("Gagal memuat dari jaringan/offline:", event.request.url);
+            });
         })
     );
 });
