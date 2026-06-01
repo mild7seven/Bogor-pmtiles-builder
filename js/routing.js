@@ -4,7 +4,7 @@ export const loadGraph = async () => {
     try {
         const res = await fetch('data/graph.json');
         graph = await res.json();
-        console.log("Graph ringan dimuat:", Object.keys(graph).length, "nodes");
+        console.log("Graph dimuat:", Object.keys(graph).length, "nodes");
     } catch (e) { console.error("Error loading graph", e); }
 };
 
@@ -19,7 +19,8 @@ const haversine = (lat1, lon1, lat2, lon2) => {
 export const getNearestNode = (lat, lng) => {
     let nearestId = null, minDistance = Infinity;
     for (let id in graph) {
-        const dist = haversine(lat, lng, graph[id][0], graph[id][1]);
+        // Membaca format asli: graph[id].lat dan graph[id].lng
+        const dist = haversine(lat, lng, graph[id].lat, graph[id].lng);
         if (dist < minDistance) { minDistance = dist; nearestId = id; }
     }
     return nearestId;
@@ -39,21 +40,21 @@ export const calculateRoute = (startLat, startLng, endLat, endLng) => {
         const current = openSet.shift().id;
 
         if (current === endId) {
-            const path = [[graph[current][1], graph[current][0]]]; // [lng, lat]
+            const path = [[graph[current].lng, graph[current].lat]];
             let curr = current;
             while (cameFrom[curr]) {
                 curr = cameFrom[curr];
-                path.unshift([graph[curr][1], graph[curr][0]]);
+                path.unshift([graph[curr].lng, graph[curr].lat]);
             }
             return { distance: gScore[endId].toFixed(2), path };
         }
 
-        const edges = graph[current][2] || [];
+        const edges = graph[current].edges || [];
         for (let edge of edges) {
-            const neighbor = edge[0]; // ID target
-            const weight = edge[1];   // Jarak
+            const neighbor = edge.to;
+            const weight = edge.weight;
             
-            // FIX KRUSIAL: Mencegah error jika node terpotong di perbatasan peta OSM
+            // Validasi: Abaikan jalur jika node tetangganya terpotong/tidak ada di JSON
             if (!graph[neighbor]) continue; 
 
             const tentativeGScore = gScore[current] + weight;
@@ -61,7 +62,7 @@ export const calculateRoute = (startLat, startLng, endLat, endLng) => {
             if (tentativeGScore < (gScore[neighbor] || Infinity)) {
                 cameFrom[neighbor] = current;
                 gScore[neighbor] = tentativeGScore;
-                const f = tentativeGScore + haversine(graph[neighbor][0], graph[neighbor][1], graph[endId][0], graph[endId][1]);
+                const f = tentativeGScore + haversine(graph[neighbor].lat, graph[neighbor].lng, graph[endId].lat, graph[endId].lng);
                 openSet.push({ id: neighbor, f });
             }
         }
