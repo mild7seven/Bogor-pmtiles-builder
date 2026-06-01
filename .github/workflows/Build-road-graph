@@ -1,0 +1,28 @@
+name: Build Road Graph
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Osmium
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osmium-tool
+
+      - name: Extract Roads
+        run: |
+          osmium tags-filter \
+            planet_106.777_-6.604_ffcb9a8a.osm.pbf \
+            w/highway \
+            -o roads.osm.pbf
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roads
+          path: roads.osm.pbf
