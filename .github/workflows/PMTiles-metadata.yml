@@ -13,12 +13,11 @@ jobs:
       - name: Download pmtiles tool
         run: |
           wget https://github.com/protomaps/go-pmtiles/releases/download/v1.30.3/go-pmtiles_1.30.3_Linux_arm64.tar.gz
-          chmod +x pmtiles-linux-amd64
-
+          chmod +x go-pmtiles_1.30.3_Linux_arm64
       - name: Show Metadata
         run: |
-          ./pmtiles-linux-amd64 show data/bogor.pmtiles
+          ./go-pmtiles_1.30.3_Linux_arm64 show data/bogor.pmtiles
 
       - name: Show Header
         run: |
-          ./pmtiles-linux-amd64 inspect data/bogor.pmtiles
+          ./go-pmtiles_1.30.3_Linux_arm64 inspect data/bogor.pmtiles
