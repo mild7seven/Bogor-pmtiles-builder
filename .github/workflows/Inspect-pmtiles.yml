@@ -1,42 +1,33 @@
-name: Extract Vector Layers from PMTiles
+name: Show PMTiles Vector Layers
 
 on:
-  push:
-    paths:
-      - 'data/bogor.pmtiles'
   workflow_dispatch:
 
 jobs:
-  extract:
+  inspect:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
+      - name: Download PMTiles CLI
         run: |
-          pip install pmtiles
-          # Opsional: Jika Anda butuh konversi lebih lanjut, gunakan geopandas atau fiona
+          wget -O pmtiles https://github.com/protomaps/go-pmtiles/releases/latest/download/pmtiles-linux-amd64
+          chmod +x pmtiles
 
-      - name: Extract metadata and layers
+      - name: Inspect PMTiles Header
         run: |
-          # Menggunakan pmtiles CLI untuk mendapatkan daftar layer
-          # Anda perlu menginstal node/npm untuk pmtiles CLI
-          sudo npm install -g pmtiles
-          
-          echo "Menampilkan informasi layer:"
-          pmtiles show data/bogor.pmtiles > layers_info.json
-          
-          echo "Ekstraksi selesai, silakan cek file layers_info.json"
+          ./pmtiles show data/bogor.pmtiles > pmtiles-info.txt
+          cat pmtiles-info.txt
 
-      - name: Upload result
+      - name: Extract Vector Layers
+        run: |
+          echo "===== VECTOR LAYERS ====="
+          grep -A 200 "vector_layers" pmtiles-info.txt || true
+
+      - name: Save Inspection Result
         uses: actions/upload-artifact@v4
         with:
-          name: vector-layers-metadata
-          path: layers_info.json
-          
+          name: pmtiles-inspection
+          path: pmtiles-info.txt
