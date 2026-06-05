@@ -1,9 +1,9 @@
-name: Extract Vector Layers to JSON
+name: Extract Vector Layers from PMTiles
 
 on:
   push:
     paths:
-      - 'bogor.pmtiles'
+      - 'data/bogor.pmtiles'
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
@@ -21,36 +21,22 @@ jobs:
       - name: Install dependencies
         run: |
           pip install pmtiles
-          # Kita gunakan pustaka pmtiles untuk membaca, 
-          # dan kita buat skrip ekstraksi sederhana
+          # Opsional: Jika Anda butuh konversi lebih lanjut, gunakan geopandas atau fiona
 
-      - name: Generate Extraction Script
+      - name: Extract metadata and layers
         run: |
-          cat <<EOF > extract.py
-          from pmtiles.reader import Reader
-          import json
-
-          # Membaca file pmtiles
-          reader = Reader("bogor.pmtiles")
+          # Menggunakan pmtiles CLI untuk mendapatkan daftar layer
+          # Anda perlu menginstal node/npm untuk pmtiles CLI
+          sudo npm install -g pmtiles
           
-          # Catatan: PMTiles menyimpan data dalam tile-tile kecil.
-          # Untuk mengekstraksi seluruh layer ke satu GeoJSON, 
-          # kita perlu melakukan proses 'tiled-to-geojson'
-          # (Untuk demo ini, kita ambil metadata layer sebagai referensi)
+          echo "Menampilkan informasi layer:"
+          pmtiles show data/bogor.pmtiles > layers_info.json
           
-          metadata = reader.header().metadata
-          with open("vector_layers_info.json", "w") as f:
-              json.dump(metadata, f, indent=4)
-          
-          print("Metadata layer berhasil diekstraksi ke vector_layers_info.json")
-          EOF
-
-      - name: Run Extraction
-        run: python extract.py
+          echo "Ekstraksi selesai, silakan cek file layers_info.json"
 
       - name: Upload result
         uses: actions/upload-artifact@v4
         with:
-          name: extracted-layers
-          path: vector_layers_info.json
+          name: vector-layers-metadata
+          path: layers_info.json
           
